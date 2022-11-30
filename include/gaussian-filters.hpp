@@ -1,15 +1,15 @@
 #include "common.h"
 #include "fits-helper.h"
-#include <time.h>
 #include "reference.h"
+#include <time.h>
 
 #ifdef __x86_64__
 #include <immintrin.h>
 #endif
 
 #ifdef __aarch64__
-#include <arm_neon.h>
 #include "sse2neon.h"
+#include <arm_neon.h>
 #endif
 
 float *golden(const char *infilename, const char *outfilename) {
@@ -67,11 +67,11 @@ float *golden(const char *infilename, const char *outfilename) {
   return fits.data;
 }
 
-#ifdef __ARM_NEON__
+#if !defined(NARM_NEON) && defined(__ARM_NEON__)
 void filter_gauss_2d_neon(float *data, float *data_copy, float *data_row,
-                         float *data_col, const size_t size_x,
-                         const size_t size_y, const size_t n_iter,
-                         const size_t filter_radius) {
+                          float *data_col, const size_t size_x,
+                          const size_t size_y, const size_t n_iter,
+                          const size_t filter_radius) {
   // Set up a few variables
   const size_t size_xy = size_x * size_y;
   float *ptr = data + size_xy;
@@ -94,7 +94,7 @@ void filter_gauss_2d_neon(float *data, float *data_copy, float *data_row,
   return;
 }
 
-float * filter_neon(const char *infilename, const char *outfilename) {
+float *filter_neon(const char *infilename, const char *outfilename) {
   int status = 0;
 
   size_t n_iter;
@@ -123,7 +123,7 @@ float * filter_neon(const char *infilename, const char *outfilename) {
   clock_t begin = clock();
 
   filter_gauss_2d_neon(data, NULL, data_row, NULL, size_x, size_y, n_iter,
-                     filter_radius);
+                       filter_radius);
 
   clock_t end = clock();
   double time_spent = (double)(end - begin) / CLOCKS_PER_SEC;
@@ -144,7 +144,7 @@ float * filter_neon(const char *infilename, const char *outfilename) {
 }
 #endif
 
-#ifdef __SSE__
+#if !defined(NSSE) && defined(__SSE__)
 void filter_gauss_2d_sse(float *data, float *data_copy, float *data_row,
                          float *data_col, const size_t size_x,
                          const size_t size_y, const size_t n_iter,
@@ -171,7 +171,7 @@ void filter_gauss_2d_sse(float *data, float *data_copy, float *data_row,
   return;
 }
 
-float * filter_sse(const char *infilename, const char *outfilename) {
+float *filter_sse(const char *infilename, const char *outfilename) {
   int status = 0;
 
   size_t n_iter;
@@ -200,7 +200,7 @@ float * filter_sse(const char *infilename, const char *outfilename) {
   clock_t begin = clock();
 
   filter_gauss_2d_sse(data, NULL, data_row, NULL, size_x, size_y, n_iter,
-                     filter_radius);
+                      filter_radius);
 
   clock_t end = clock();
   double time_spent = (double)(end - begin) / CLOCKS_PER_SEC;
@@ -221,7 +221,7 @@ float * filter_sse(const char *infilename, const char *outfilename) {
 }
 #endif
 
-#ifdef __AVX2__
+#if !defined(NAVX2) && defined(__AVX2__)
 void filter_gauss_2d_avx(float *data, float *data_copy, float *data_row,
                          float *data_col, const size_t size_x,
                          const size_t size_y, const size_t n_iter,
@@ -248,8 +248,7 @@ void filter_gauss_2d_avx(float *data, float *data_copy, float *data_row,
   return;
 }
 
-
-float * filter_avx(const char *infilename, const char *outfilename) {
+float *filter_avx(const char *infilename, const char *outfilename) {
   int status = 0;
 
   size_t n_iter;
@@ -278,7 +277,7 @@ float * filter_avx(const char *infilename, const char *outfilename) {
   clock_t begin = clock();
 
   filter_gauss_2d_avx(data, NULL, data_row, NULL, size_x, size_y, n_iter,
-                     filter_radius);
+                      filter_radius);
 
   clock_t end = clock();
   double time_spent = (double)(end - begin) / CLOCKS_PER_SEC;

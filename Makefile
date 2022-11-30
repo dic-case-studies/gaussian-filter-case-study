@@ -1,4 +1,4 @@
-CXXFLAGS=-std=c++14 -Wall -Wextra -pedantic -I include -O3 `pkg-config --libs cfitsio`
+CXXFLAGS=-std=c++14 -Wall -Wextra -pedantic -I include -O3 `pkg-config --libs cfitsio` -DASSERT
 
 processor := $(shell uname -m)
 ifeq ($(processor),$(filter $(processor),aarch64 arm64))

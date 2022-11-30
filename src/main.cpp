@@ -1,10 +1,8 @@
-#include <cstddef>
 #include "gaussian-filters.hpp"
+#include <cstddef>
 
-int main(int argc, char **argv)
-{
-  if (argc != 2)
-  {
+int main(int argc, char **argv) {
+  if (argc != 2) {
     printf("Usage: imgauss <inimage>\n");
     abort();
   }
@@ -19,27 +17,35 @@ int main(int argc, char **argv)
   size_t size_y = 1024;
   float *expected, *actual_neon, *actual_sse, *actual_avx;
 
+#ifndef NGOLDEN
   expected = golden(infilename, outfilename_expected);
+#endif
 
-#ifdef __ARM_NEON__
+#if !defined(NARM_NEON) && defined(__ARM_NEON__)
   actual_neon = filter_neon(infilename, outfilename_neon);
 
+#ifdef ASSERT
   assert_array(expected, actual_neon, size_x, size_y);
   printf("Assertions passed NEON\n");
 #endif
+#endif
 
-#ifdef __SSE__
+#if !defined(NSSE) && defined(__SSE__)
   actual_sse = filter_sse(infilename, outfilename_sse);
 
+#ifdef ASSERT
   assert_array(expected, actual_sse, size_x, size_y);
   printf("Assertions passed SSE\n");
 #endif
+#endif
 
-#ifdef __AVX2__
+#if !defined(NAVX2) && defined(__AVX2__)
   actual_avx = filter_avx(infilename, outfilename_avx);
 
+#ifdef ASSERT
   assert_array(expected, actual_avx, size_x, size_y);
   printf("Assertions passed AVX\n");
+#endif
 #endif
 
   if (expected)
