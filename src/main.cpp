@@ -10,10 +10,10 @@ int main(int argc, char **argv)
   }
 
   char *infilename = argv[1];
-  char *outfilename_expected = "golden_output_file.fits";
-  char *outfilename_neon = "neon_output_file.fits";
-  char *outfilename_sse = "sse_output_file.fits";
-  char *outfilename_avx = "avx_output_file.fits";
+  char *outfilename_expected = "out/golden_output_file.fits";
+  char *outfilename_neon = "out/neon_output_file.fits";
+  char *outfilename_sse = "out/sse_output_file.fits";
+  char *outfilename_avx = "out/avx_output_file.fits";
 
   size_t size_x = 1024;
   size_t size_y = 1024;

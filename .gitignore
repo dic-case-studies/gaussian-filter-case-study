@@ -1,3 +1,4 @@
 *.fits
 build/
 .vscode/
+out/

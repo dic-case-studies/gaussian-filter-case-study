@@ -1,0 +1,14 @@
+sigma: 3.500000 filter_radius: 2 niter: 6
+Dim: 15606 x 13680 x 1 x 1
+Time elapsed GOLDEN: 4.769706 s
+Storing result in FITS
+sigma: 3.500000 filter_radius: 2 niter: 6
+Dim: 15606 x 13680 x 1 x 1
+Time elapsed NEON: 4.843079 s
+Storing result in FITS
+Assertions passed NEON
+sigma: 3.500000 filter_radius: 2 niter: 6
+Dim: 15606 x 13680 x 1 x 1
+Time elapsed SSE: 5.117598 s
+Storing result in FITS
+Assertions passed SSE
