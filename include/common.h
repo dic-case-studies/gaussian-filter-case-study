@@ -16,7 +16,7 @@
 #define FILTER_NAN(x) ((x) == (x) ? (x) : 0)
 #define BOXCAR_MIN_ITER 3
 #define BOXCAR_MAX_ITER 6
-#define TOLERANCE 0.01
+#define TOLERANCE 0.1
 
 void optimal_filter_size_dbl(const double sigma, size_t *filter_radius,
                              size_t *n_iter) {
@@ -243,11 +243,13 @@ void assert_array(float *expected, float *actual, size_t size_x,
                   size_t size_y) {
   for (size_t y = 0; y < size_y; y++) {
     for (size_t x = 0; x < size_x; x++) {
-      float val = fabs(expected[y * size_x + x] - actual[y * size_x + x]);
-      if (val > TOLERANCE) {
+      float diff = fabs(expected[y * size_x + x] - actual[y * size_x + x]);
+      float deviation = (diff / expected[y * size_x + x]) * 100.0f;
+      if (deviation > TOLERANCE) {
         printf("Error asserting point %ld %ld, expected: %f actual %f\n", x, y,
                expected[y * size_x + x], actual[y * size_x + x]);
-        assert(val < TOLERANCE);
+        exit(-1);
+        // assert(deviation < TOLERANCE);
       }
     }
   }
