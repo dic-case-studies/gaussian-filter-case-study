@@ -11,7 +11,17 @@ rm -rf stat/$host/${image}-result.txt stat/$host/${image}-stats.csv out/*
 
 ./build/main $image > stat/$host/${image}-result.txt
 
-declare -a methods=(GOLDEN SSE NEON)
+METHOD=AVX
+
+processor=$(uname -m)
+
+if [$processor == "arm64"]
+then
+    METHOD=NEON 
+fi
+
+declare -a methods=(GOLDEN SSE $METHOD)
+
 
 AWK=awk
 function pattern() {
@@ -39,7 +49,7 @@ set terminal png enhanced large; \
 set title \"Gaussian Filter Benchmark\";                        \
 set xlabel \"METHODS\";                             \
 set ylabel \"Execution time(s)\";                     \
-set yrange [0:10];                 \
+set yrange [0:15];                 \
 unset key;                                      \
 set boxwidth 0.5;                                       \
 set style fill solid;                                \
