@@ -15,7 +15,7 @@ METHOD=AVX
 
 processor=$(uname -m)
 
-if [$processor == "arm64"]
+if [ $processor = "arm64" ]
 then
     METHOD=NEON 
 fi
