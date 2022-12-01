@@ -13,8 +13,8 @@ int main(int argc, char **argv) {
   char *outfilename_sse = "out/sse_output_file.fits";
   char *outfilename_avx = "out/avx_output_file.fits";
 
-  size_t size_x = 385;
-  size_t size_y = 385;
+  size_t size_x = 15606;
+  size_t size_y = 13680;
   float *expected, *actual_neon, *actual_sse, *actual_avx;
 
 #ifndef NGOLDEN

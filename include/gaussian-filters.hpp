@@ -84,11 +84,39 @@ void filter_gauss_2d_neon(float *data, float *data_copy, float *data_row,
     filter_boxcar_1d_flt(ptr, data_row, size_x, filter_radius);
   }
 
-  for (size_t x = 0; x < size_x; x += 4) {
+  size_t quot = size_x / 4;
+  size_t limit = quot * 4;
+  for (size_t x = 0; x < limit; x += 4) {
     // Apply filter
     // for (size_t i = n_iter; i--;) {
     filter_simd_neon(data + x, size_y, size_x, filter_radius);
     // }
+  }
+
+  float *ptr2;
+  data_copy = (float *)malloc(sizeof(float) * size_y);
+  data_col = (float *)malloc(sizeof(float) * (size_y + 2 * filter_radius));
+
+  for (size_t x = size_x; x > limit; x--) {
+    // Copy data into column array
+    ptr = data + size_xy - size_x + x - 1;
+    ptr2 = data_copy + size_y;
+    while (ptr2-- > data_copy) {
+      *ptr2 = *ptr;
+      ptr -= size_x;
+    }
+
+    // Apply filter
+    // for (size_t i = n_iter; i--;)
+    filter_boxcar_1d_flt(data_copy, data_col, size_y, filter_radius);
+
+    // Copy column array back into data array
+    ptr = data + size_xy - size_x + x - 1;
+    ptr2 = data_copy + size_y;
+    while (ptr2-- > data_copy) {
+      *ptr = *ptr2;
+      ptr -= size_x;
+    }
   }
 
   return;
