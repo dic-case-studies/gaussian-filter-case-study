@@ -2,3 +2,4 @@
 build/
 .vscode/
 out/
+compile_flags.txt

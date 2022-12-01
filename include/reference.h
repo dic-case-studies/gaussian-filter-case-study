@@ -1,6 +1,6 @@
 #pragma once
-#include <stdlib.h>
 #include "common.h"
+#include <stdlib.h>
 
 /* Code taken from SoFiA https://github.com/SoFiA-Admin/SoFiA-2.git */
 
@@ -17,8 +17,8 @@ void filter_gauss_2d_flt(float *data, float *data_copy, float *data_row,
   // This is straightforward, as the data are contiguous in x.
   while (ptr > data) {
     ptr -= size_x;
-    for (size_t i = n_iter; i--;)
-      filter_boxcar_1d_flt(ptr, data_row, size_x, filter_radius);
+    // for (size_t i = n_iter; i--;)
+    filter_boxcar_1d_flt(ptr, data_row, size_x, filter_radius);
   }
 
   // Run column filter (along y-axis)
@@ -33,8 +33,8 @@ void filter_gauss_2d_flt(float *data, float *data_copy, float *data_row,
     }
 
     // Apply filter
-    for (size_t i = n_iter; i--;)
-      filter_boxcar_1d_flt(data_copy, data_col, size_y, filter_radius);
+    // for (size_t i = n_iter; i--;)
+    filter_boxcar_1d_flt(data_copy, data_col, size_y, filter_radius);
 
     // Copy column array back into data array
     ptr = data + size_xy - size_x + x;

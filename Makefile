@@ -1,4 +1,4 @@
-CXXFLAGS=-std=c++14 -Wall -Wextra -pedantic -I include -O3 `pkg-config --libs cfitsio` -DASSERT
+CXXFLAGS=-std=c++14 -Wall -Wextra -pedantic -I include `pkg-config --libs cfitsio` -DASSERT
 
 processor := $(shell uname -m)
 ifeq ($(processor),$(filter $(processor),aarch64 arm64))
@@ -14,7 +14,7 @@ CXX=g++
 all: dir build/main 
 
 build/%: src/%.cpp
-	$(CXX) -o $@ $< $(CXXFLAGS) $(ARCH_C_FLAGS) $(OPT)
+	$(CXX) -o $@ $< $(CXXFLAGS) $(ARCH_C_FLAGS) $(OPT) $(DEBUGFLAGS)
 
 scratch: scratch.cpp
 	$(CXX) -o $@ $< $(CXXFLAGS) $(ARCH_C_FLAGS) $(OPT)

@@ -13,8 +13,8 @@ int main(int argc, char **argv) {
   char *outfilename_sse = "out/sse_output_file.fits";
   char *outfilename_avx = "out/avx_output_file.fits";
 
-  size_t size_x = 1024;
-  size_t size_y = 1024;
+  size_t size_x = 385;
+  size_t size_y = 385;
   float *expected, *actual_neon, *actual_sse, *actual_avx;
 
 #ifndef NGOLDEN
@@ -28,6 +28,8 @@ int main(int argc, char **argv) {
   assert_array(expected, actual_neon, size_x, size_y);
   printf("Assertions passed NEON\n");
 #endif
+  if (actual_neon)
+    free(actual_neon);
 #endif
 
 #if !defined(NSSE) && defined(__SSE__)
@@ -37,6 +39,8 @@ int main(int argc, char **argv) {
   assert_array(expected, actual_sse, size_x, size_y);
   printf("Assertions passed SSE\n");
 #endif
+  if (actual_sse)
+    free(actual_sse);
 #endif
 
 #if !defined(NAVX2) && defined(__AVX2__)
@@ -46,14 +50,10 @@ int main(int argc, char **argv) {
   assert_array(expected, actual_avx, size_x, size_y);
   printf("Assertions passed AVX\n");
 #endif
+  if (actual_avx)
+    free(actual_avx);
 #endif
 
   if (expected)
     free(expected);
-  if (actual_neon)
-    free(actual_neon);
-  if (actual_sse)
-    free(actual_sse);
-  if (actual_avx)
-    free(actual_avx);
 }
