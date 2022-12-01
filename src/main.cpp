@@ -1,8 +1,10 @@
 #include "gaussian-filters.hpp"
 #include <cstddef>
 
-int main(int argc, char **argv) {
-  if (argc != 2) {
+int main(int argc, char **argv)
+{
+  if (argc != 2)
+  {
     printf("Usage: imgauss <inimage>\n");
     abort();
   }
@@ -13,12 +15,12 @@ int main(int argc, char **argv) {
   char *outfilename_sse = "out/sse_output_file.fits";
   char *outfilename_avx = "out/avx_output_file.fits";
 
-  size_t size_x = 15606;
-  size_t size_y = 13680;
+  size_t size_x;
+  size_t size_y;
   float *expected, *actual_neon, *actual_sse, *actual_avx;
 
 #ifndef NGOLDEN
-  expected = golden(infilename, outfilename_expected);
+  expected = golden(infilename, outfilename_expected, size_x, size_y);
 #endif
 
 #if !defined(NARM_NEON) && defined(__ARM_NEON__)

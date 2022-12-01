@@ -12,7 +12,7 @@
 #include <arm_neon.h>
 #endif
 
-float *golden(const char *infilename, const char *outfilename) {
+float *golden(const char *infilename, const char *outfilename, size_t&  size_x, size_t& size_y) {
   int status = 0;
 
   size_t n_iter;
@@ -32,8 +32,8 @@ float *golden(const char *infilename, const char *outfilename) {
   }
 
   float *data = fits.data;
-  size_t size_x = fits.naxes[0];
-  size_t size_y = fits.naxes[1];
+  size_x = fits.naxes[0];
+  size_y = fits.naxes[1];
 
   float *column = (float *)malloc(sizeof(float) * size_y);
   float *data_col =
