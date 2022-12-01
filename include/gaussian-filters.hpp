@@ -80,15 +80,15 @@ void filter_gauss_2d_neon(float *data, float *data_copy, float *data_row,
   // This is straightforward, as the data are contiguous in x.
   while (ptr > data) {
     ptr -= size_x;
-    for (size_t i = n_iter; i--;)
-      filter_boxcar_1d_flt(ptr, data_row, size_x, filter_radius);
+    // for (size_t i = n_iter; i--;)
+    filter_boxcar_1d_flt(ptr, data_row, size_x, filter_radius);
   }
 
   for (size_t x = 0; x < size_x; x += 4) {
     // Apply filter
-    for (size_t i = n_iter; i--;) {
-      filter_simd_neon(data + x, size_y, size_x, filter_radius);
-    }
+    // for (size_t i = n_iter; i--;) {
+    filter_simd_neon(data + x, size_y, size_x, filter_radius);
+    // }
   }
 
   return;
@@ -157,8 +157,8 @@ void filter_gauss_2d_sse(float *data, float *data_copy, float *data_row,
   // This is straightforward, as the data are contiguous in x.
   while (ptr > data) {
     ptr -= size_x;
-    for (size_t i = n_iter; i--;)
-      filter_boxcar_1d_flt(ptr, data_row, size_x, filter_radius);
+    // for (size_t i = n_iter; i--;)
+    filter_boxcar_1d_flt(ptr, data_row, size_x, filter_radius);
   }
 
   size_t quot = size_x / 4;
@@ -263,8 +263,8 @@ void filter_gauss_2d_avx(float *data, float *data_copy, float *data_row,
   // This is straightforward, as the data are contiguous in x.
   while (ptr > data) {
     ptr -= size_x;
-    for (size_t i = n_iter; i--;)
-      filter_boxcar_1d_flt(ptr, data_row, size_x, filter_radius);
+    // for (size_t i = n_iter; i--;)
+    filter_boxcar_1d_flt(ptr, data_row, size_x, filter_radius);
   }
 
   size_t quot = size_x / 8;
@@ -272,9 +272,9 @@ void filter_gauss_2d_avx(float *data, float *data_copy, float *data_row,
 
   for (size_t x = 0; x < limit; x += 8) {
     // Apply filter
-    for (size_t i = n_iter; i--;) {
-      filter_simd_avx(data + x, size_y, size_x, filter_radius);
-    }
+    // for (size_t i = n_iter; i--;) {
+    filter_simd_avx(data + x, size_y, size_x, filter_radius);
+    // }
   }
 
   float *ptr2;
