@@ -94,8 +94,9 @@ void filter_simd_sse(float *data, const size_t size, const size_t stride,
   __m128 inv_filter_size_v = _mm_set1_ps(inv_filter_size);
   __m128 zero_v = _mm_setzero_ps();
 
-  __m128 *data_copy =
-      (__m128 *)malloc(sizeof(__m128) * (size + 2 * filter_radius));
+  // __m128 *data_copy = (__m128 *)malloc(sizeof(__m128) * (size + 2 * filter_radius));
+  
+  __m128 *data_copy = (__m128 *)_mm_malloc(sizeof(__m128) * (size + 2 * filter_radius), sizeof(__m128));
 
   for (i = size; i--;)
     data_copy[filter_radius + i] =
@@ -203,8 +204,10 @@ void filter_simd_avx(float *data, const size_t size, const size_t stride,
   __m256 inv_filter_size_v = _mm256_set1_ps(inv_filter_size);
   __m256 zero_v = _mm256_setzero_ps();
 
+  // __m256 *data_copy = (__m256 *)malloc(sizeof(__m256) * (size + 2 * filter_radius));  
+  
   __m256 *data_copy =
-      (__m256 *)malloc(sizeof(__m256) * (size + 2 * filter_radius));
+      (__m256 *)_mm_malloc(sizeof(__m256) * (size + 2 * filter_radius), sizeof(__m256));
 
   for (i = size; i--;)
     data_copy[filter_radius + i] =

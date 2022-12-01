@@ -42,7 +42,8 @@ int extract_data_from_fits(fitsfile *fptr, fits_data_t *fits) {
   printf("Dim: %ld x %ld x %ld x %ld\n", naxes[0], naxes[1], naxes[2],
          naxes[3]);
 
-  fits->data = (float *)malloc(naxes[0] * naxes[1] * sizeof(float));
+  // fits->data = (float *)malloc(naxes[0] * naxes[1] * sizeof(float));
+  fits->data = (float *)_mm_malloc(naxes[0] * naxes[1] * sizeof(float), sizeof(float));
 
   if (fits->data == NULL) {
     printf("Memory allocation error\n");

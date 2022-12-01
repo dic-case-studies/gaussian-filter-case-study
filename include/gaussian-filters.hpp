@@ -203,8 +203,11 @@ void filter_gauss_2d_sse(float *data, float *data_copy, float *data_row,
   }
 
   float *ptr2;
-  data_copy = (float *)malloc(sizeof(float) * size_y);
-  data_col = (float *)malloc(sizeof(float) * (size_y + 2 * filter_radius));
+  // data_copy = (float *)malloc(sizeof(float) * size_y);
+  data_copy = (float *)_mm_malloc(size_y * sizeof(float), sizeof(float));
+  
+  // data_col = (float *)malloc(sizeof(float) * (size_y + 2 * filter_radius));
+  data_col = (float *)_mm_malloc((size_y + 2 * filter_radius) * sizeof(float), sizeof(float));
 
   for (size_t x = size_x; x > limit; x--) {
     // Copy data into column array
@@ -257,8 +260,10 @@ float *filter_sse(const char *infilename, const char *outfilename) {
   size_t size_x = fits.naxes[0];
   size_t size_y = fits.naxes[1];
 
+  // float *data_row =
+  //     (float *)malloc(sizeof(float) * (size_x + 2 * filter_radius));
   float *data_row =
-      (float *)malloc(sizeof(float) * (size_x + 2 * filter_radius));
+      (float *)_mm_malloc((size_x + 2 * filter_radius) * sizeof(float), sizeof(float));
 
   clock_t begin = clock();
 
@@ -312,8 +317,10 @@ void filter_gauss_2d_avx(float *data, float *data_copy, float *data_row,
   }
 
   float *ptr2;
-  data_copy = (float *)malloc(sizeof(float) * size_y);
-  data_col = (float *)malloc(sizeof(float) * (size_y + 2 * filter_radius));
+  // data_copy = (float *)malloc(sizeof(float) * size_y);
+  data_copy = (float *)_mm_malloc(size_y * sizeof(float), sizeof(float));
+  // data_col = (float *)malloc(sizeof(float) * (size_y + 2 * filter_radius));
+  data_col = (float *)_mm_malloc((size_y + 2 * filter_radius) * sizeof(float), sizeof(float));
 
   for (size_t x = size_x; x > limit; x--) {
     // Copy data into column array
@@ -366,8 +373,9 @@ float *filter_avx(const char *infilename, const char *outfilename) {
   size_t size_x = fits.naxes[0];
   size_t size_y = fits.naxes[1];
 
-  float *data_row =
-      (float *)malloc(sizeof(float) * (size_x + 2 * filter_radius));
+  // float *data_row = (float *)malloc(sizeof(float) * (size_x + 2 * filter_radius));
+
+    float *data_row =  (float *)_mm_malloc((size_x + 2 * filter_radius) * sizeof(float), sizeof(float));
 
   clock_t begin = clock();
 
