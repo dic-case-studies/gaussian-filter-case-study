@@ -1,0 +1,25 @@
+Running main GOLDEN 
+
+FITSIO status = 115: NULL input pointer
+failed to create new file (already exists?):
+out/golden_output_file.fits
+
+FITSIO status = 115: NULL input pointer
+failed to create new file (already exists?):
+out/avx_output_file.fits
+sigma: 3.500000 filter_radius: 2 niter: 6
+Dim: 15606 x 13680 x 1 x 1
+Time elapsed GOLDEN: 1.132558 s
+Storing result in FITS
+sigma: 3.500000 filter_radius: 2 niter: 6
+Dim: 15606 x 13680 x 1 x 1
+Time elapsed AVX: 0.489608 s
+Storing result in FITS
+
+ Performance counter stats for 'system wide':
+
+   <not supported> Joules power/energy-pkg/u                                          
+
+       2.041185343 seconds time elapsed
+
+----------------------------
