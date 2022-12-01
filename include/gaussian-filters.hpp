@@ -119,6 +119,9 @@ void filter_gauss_2d_neon(float *data, float *data_copy, float *data_row,
     }
   }
 
+  free(data_copy);
+  free(data_col);
+
   return;
 }
 
@@ -225,6 +228,9 @@ void filter_gauss_2d_sse(float *data, float *data_copy, float *data_row,
     }
   }
 
+  free(data_copy);
+  free(data_col);
+
   return;
 }
 
@@ -330,6 +336,9 @@ void filter_gauss_2d_avx(float *data, float *data_copy, float *data_row,
       ptr -= size_x;
     }
   }
+
+  free(data_copy);
+  free(data_col);
 
   return;
 }
