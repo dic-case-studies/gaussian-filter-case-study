@@ -10,7 +10,7 @@ host=$1
 image=$2
 
 mkdir -p stat/$host/energy
-rm -f stat/$ host/energy/$image-stats.csv
+rm -f stat/$host/energy/$image-stats.csv
 
 for method in ${METHODS[@]}
 do
@@ -42,7 +42,8 @@ function pattern() {
 
 for ((i=0 ; i < 3; i++))
 do
-    PATTERN=`pattern $i ${methods[i]}` 
+    method=${METHODS[i]}
+    PATTERN=`pattern $i ${METHODS[i]}` 
     cat stat/$host/energy/$image-$method-result.txt | $AWK "$PATTERN" >> stat/$host/energy/${image}-stats.csv
 done
 
@@ -53,6 +54,7 @@ done
     set title \"Gaussian Filter Energy Benchmark\";                        \
     set xlabel \"Methods\";                             \
     set ylabel \"Joules\";                     \
+    set yrange [0:150];                 \
     unset key;                                      \
     set boxwidth 0.5;                                       \
     set style fill solid;                                \
