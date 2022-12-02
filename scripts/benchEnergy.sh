@@ -10,6 +10,7 @@ host=$1
 image=$2
 
 mkdir -p stat/$host/energy
+rm -f stat/$ host/energy/$image-stats.csv
 
 for method in ${METHODS[@]}
 do
