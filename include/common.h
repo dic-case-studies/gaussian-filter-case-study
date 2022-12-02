@@ -16,7 +16,7 @@
 #define FILTER_NAN(x) ((x) == (x) ? (x) : 0)
 #define BOXCAR_MIN_ITER 3
 #define BOXCAR_MAX_ITER 6
-#define TOLERANCE 0.1
+#define TOLERANCE 0.00001
 
 void optimal_filter_size_dbl(const double sigma, size_t *filter_radius,
                              size_t *n_iter) {
@@ -94,9 +94,11 @@ void filter_simd_sse(float *data, const size_t size, const size_t stride,
   __m128 inv_filter_size_v = _mm_set1_ps(inv_filter_size);
   __m128 zero_v = _mm_setzero_ps();
 
-  // __m128 *data_copy = (__m128 *)malloc(sizeof(__m128) * (size + 2 * filter_radius));
-  
-  __m128 *data_copy = (__m128 *)_mm_malloc(sizeof(__m128) * (size + 2 * filter_radius), sizeof(__m128));
+  // __m128 *data_copy = (__m128 *)malloc(sizeof(__m128) * (size + 2 *
+  // filter_radius));
+
+  __m128 *data_copy = (__m128 *)_mm_malloc(
+      sizeof(__m128) * (size + 2 * filter_radius), sizeof(__m128));
 
   for (i = size; i--;)
     data_copy[filter_radius + i] =
@@ -204,10 +206,11 @@ void filter_simd_avx(float *data, const size_t size, const size_t stride,
   __m256 inv_filter_size_v = _mm256_set1_ps(inv_filter_size);
   __m256 zero_v = _mm256_setzero_ps();
 
-  // __m256 *data_copy = (__m256 *)malloc(sizeof(__m256) * (size + 2 * filter_radius));  
-  
-  __m256 *data_copy =
-      (__m256 *)_mm_malloc(sizeof(__m256) * (size + 2 * filter_radius), sizeof(__m256));
+  // __m256 *data_copy = (__m256 *)malloc(sizeof(__m256) * (size + 2 *
+  // filter_radius));
+
+  __m256 *data_copy = (__m256 *)_mm_malloc(
+      sizeof(__m256) * (size + 2 * filter_radius), sizeof(__m256));
 
   for (i = size; i--;)
     data_copy[filter_radius + i] =
@@ -246,11 +249,13 @@ void assert_array(float *expected, float *actual, size_t size_x,
                   size_t size_y) {
   for (size_t y = 0; y < size_y; y++) {
     for (size_t x = 0; x < size_x; x++) {
-      float diff = fabs(expected[y * size_x + x] - actual[y * size_x + x]);
-      float deviation = (diff / expected[y * size_x + x]) * 100.0f;
-      if (deviation > TOLERANCE) {
+      float expected_value = expected[y * size_x + x];
+      float actual_value = actual[y * size_x + x];
+
+      float diff = fabs(expected_value - actual_value);
+      if (diff > TOLERANCE) {
         printf("Error asserting point %ld %ld, expected: %f actual %f\n", x, y,
-               expected[y * size_x + x], actual[y * size_x + x]);
+               expected_value, actual_value);
         exit(-1);
         // assert(deviation < TOLERANCE);
       }
