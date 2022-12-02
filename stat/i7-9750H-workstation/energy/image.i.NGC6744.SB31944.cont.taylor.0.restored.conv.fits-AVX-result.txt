@@ -5,13 +5,13 @@ failed to create new file (already exists?):
 out/avx_output_file.fits
 sigma: 3.500000 filter_radius: 2 niter: 6
 Dim: 15606 x 13680 x 1 x 1
-Time elapsed AVX: 0.494723 s
+Time elapsed AVX: 0.488461 s
 Storing result in FITS
 
  Performance counter stats for 'system wide':
 
-   <not supported> Joules power/energy-pkg/u                                          
+             31.27 Joules power/energy-pkg/                                           
 
-       0.707268818 seconds time elapsed
+       0.699859369 seconds time elapsed
 
 ----------------------------
