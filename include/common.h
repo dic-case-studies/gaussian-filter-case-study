@@ -245,6 +245,64 @@ void filter_simd_avx(float *data, const size_t size, const size_t stride,
 }
 #endif
 
+
+#if !defined(NAVX2) && defined(__AVX512F__) 
+static inline __m512 filter_nan_avx_512(__m512 data_v) {
+  // Filter nan
+  __mmask16 nan_mask = _mm512_cmp_ps_mask(data_v, data_v, _CMP_ORD_Q);
+  __m512 zero_v = _mm512_setzero_ps();
+  __m512 data_filtered_v = _mm512_mask_blend_ps(nan_mask, zero_v, data_v);
+  return data_filtered_v;
+}
+
+void filter_simd_avx_512(float *data, const size_t size, const size_t stride,
+                     const size_t filter_radius) {
+  const size_t filter_size = 2 * filter_radius + 1;
+  size_t i;
+
+  const float inv_filter_size = 1.0 / filter_size;
+  __m512 inv_filter_size_v = _mm512_set1_ps(inv_filter_size);
+  __m512 zero_v = _mm512_setzero_ps();
+
+  // __m256 *data_copy = (__m256 *)malloc(sizeof(__m256) * (size + 2 *
+  // filter_radius));
+
+  __m512 *data_copy = (__m512 *)_mm_malloc(
+      sizeof(__m512) * (size + 2 * filter_radius), sizeof(__m512));
+
+  for (i = size; i--;)
+    data_copy[filter_radius + i] =
+        filter_nan_avx_512(_mm512_loadu_ps(data + (stride * i)));
+
+  for (i = filter_radius; i--;)
+    data_copy[i] = data_copy[size + filter_radius + i] = zero_v;
+
+  // Calculate last point
+  __m512 last_pt = zero_v;
+  for (i = filter_size; i--;) {
+    last_pt = _mm512_add_ps(last_pt, data_copy[size + i - 1]);
+  }
+  last_pt = _mm512_mul_ps(last_pt, inv_filter_size_v);
+  _mm512_storeu_ps(data + (stride * (size - 1)), last_pt);
+
+  __m512 next_pt = last_pt;
+  for (int col = size - 1; col--;) {
+    __m512 current_pt =
+        _mm512_sub_ps(data_copy[col], data_copy[filter_size + col]);
+    current_pt = _mm512_mul_ps(current_pt, inv_filter_size_v);
+    current_pt = _mm512_add_ps(next_pt, current_pt);
+
+    _mm512_storeu_ps(data + (stride * col), current_pt);
+
+    next_pt = current_pt;
+  }
+
+  free(data_copy);
+
+  return;
+}
+#endif
+
 void assert_array(float *expected, float *actual, size_t size_x,
                   size_t size_y) {
   for (size_t y = 0; y < size_y; y++) {

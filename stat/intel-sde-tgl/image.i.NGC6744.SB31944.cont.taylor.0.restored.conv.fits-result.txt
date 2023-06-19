@@ -1,0 +1,19 @@
+sigma: 3.500000 filter_radius: 2 niter: 6
+Dim: 15606 x 13680 x 1 x 1
+Time elapsed GOLDEN: 13.610832 s
+Storing result in FITS
+sigma: 3.500000 filter_radius: 2 niter: 6
+Dim: 15606 x 13680 x 1 x 1
+Time elapsed SSE: 6.784936 s
+Storing result in FITS
+Assertions passed SSE
+sigma: 3.500000 filter_radius: 2 niter: 6
+Dim: 15606 x 13680 x 1 x 1
+Time elapsed AVX: 5.744278 s
+Storing result in FITS
+Assertions passed AVX
+sigma: 3.500000 filter_radius: 2 niter: 6
+Dim: 15606 x 13680 x 1 x 1
+Time elapsed AVX512: 7.666385 s
+Storing result in FITS
+Assertions passed AVX512

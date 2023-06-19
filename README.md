@@ -13,6 +13,19 @@ make all
 ./scripts/benchEnergy.sh <host> <image>
 ```
 
+## To run with AVX512 using intel SDE emulator
+
+Download the intel SDE emulator tar file. The extracted archive will contain an executable `sde64` which should be used to start the emulator / pass the command to be run by emulator.
+
+```sh
+# 1. Run make to build project
+<path_to_emulator>/sde64 -- make all OPT="-mavx512f"
+# 2. Script to run performance benchmarks
+<path_to_emulator>/sde64 <architecture> -- ./scripts/bench.sh <host> <image>
+```
+
+Run `<path_to_emulator>/sde64 --help` to know supported intel architectures
+
 -------------
 
 ## Performance

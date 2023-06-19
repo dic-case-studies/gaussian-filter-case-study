@@ -5,30 +5,31 @@ set -x
 
 host=$1
 image=$2
+
 mkdir -p stat/$host
 
 rm -rf stat/$host/${image}-result.txt stat/$host/${image}-stats.csv out/*
 
+# running the main function
 ./build/main $image > stat/$host/${image}-result.txt
 
-METHOD=AVX
+declare -a methods=(GOLDEN SSE)
 
 processor=$(uname -m)
 
 if [ $processor = "arm64" ]
 then
-    METHOD=NEON 
+    methods+=(NEON) 
+else
+    methods+=(AVX AVX512)
 fi
-
-declare -a methods=(GOLDEN SSE $METHOD)
-
 
 AWK=awk
 function pattern() {
   id=$1
   label=$2
   PATTERN="
-  /Time elapsed $label/ {
+  /Time elapsed ${label}:/ {
     time = \$(NF-1);
     printf(\"%s %s %s\n\", $id, \"$label\", time);
   }
@@ -36,7 +37,9 @@ function pattern() {
   echo $PATTERN
 }
 
-for ((i=0 ; i < 3; i++))
+numMethods=${#methods[@]}
+
+for ((i=0 ; i < numMethods; i++))
 do
     PATTERN=`pattern $i ${methods[i]}` 
     cat stat/$host/${image}-result.txt | $AWK "$PATTERN" >> stat/$host/${image}-stats.csv

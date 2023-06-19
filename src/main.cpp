@@ -5,7 +5,7 @@ int main(int argc, char **argv)
 {
   if (argc != 2)
   {
-    printf("Usage: imgauss <inimage>\n");
+    printf("Usage: %s <inimage>\n",argv[0]);
     abort();
   }
 
@@ -14,10 +14,11 @@ int main(int argc, char **argv)
   char *outfilename_neon = "out/neon_output_file.fits";
   char *outfilename_sse = "out/sse_output_file.fits";
   char *outfilename_avx = "out/avx_output_file.fits";
+  char *outfilename_avx_512 = "out/avx_512_output_file.fits";
 
   size_t size_x;
   size_t size_y;
-  float *expected, *actual_neon, *actual_sse, *actual_avx;
+  float *expected, *actual_neon, *actual_sse, *actual_avx, *actual_avx_512;
 
 #ifndef NGOLDEN
   expected = golden(infilename, outfilename_expected, size_x, size_y);
@@ -54,6 +55,18 @@ int main(int argc, char **argv)
 #endif
   if (actual_avx)
     free(actual_avx);
+#endif
+
+// find a more generic AVX512 macro for this
+#if !defined(NAVX2) && defined(__AVX512F__) 
+  actual_avx_512 = filter_avx_512(infilename, outfilename_avx_512);
+
+#ifdef ASSERT
+  assert_array(expected, actual_avx_512, size_x, size_y);
+  printf("Assertions passed AVX512\n");
+#endif
+  if (actual_avx_512)
+    free(actual_avx_512);
 #endif
 
   if (expected)
