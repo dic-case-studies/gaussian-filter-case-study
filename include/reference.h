@@ -4,6 +4,30 @@
 
 /* Code taken from SoFiA https://github.com/SoFiA-Admin/SoFiA-2.git */
 
+#define FILTER_NAN(x) ((x) == (x) ? (x) : 0)
+#define BOXCAR_MIN_ITER 3
+#define BOXCAR_MAX_ITER 6
+
+void optimal_filter_size_dbl(const double sigma, size_t *filter_radius,
+                             size_t *n_iter) {
+  *n_iter = 0;
+  *filter_radius = 0;
+  double tmp = -1.0;
+  size_t i;
+
+  for (i = BOXCAR_MIN_ITER; i <= BOXCAR_MAX_ITER; ++i) {
+    const double radius = sqrt((3.0 * sigma * sigma / i) + 0.25) - 0.5;
+    const double diff = fabs(radius - floor(radius + 0.5));
+
+    if (tmp < 0.0 || diff < tmp) {
+      tmp = diff;
+      *n_iter = i;
+      *filter_radius = (size_t)(radius + 0.5);
+    }
+  }
+  return;
+}
+
 void filter_boxcar_1d_flt(float *data, float *data_copy, const size_t size,
                           const size_t filter_radius) {
   // Define filter size

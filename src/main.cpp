@@ -21,7 +21,7 @@ int main(int argc, char **argv) {
 #ifndef NGOLDEN
   float *expected;
   expected =
-      golden(infilename.c_str(), outfilename_expected.c_str(), size_x, size_y);
+      filter_golden(infilename.c_str(), outfilename_expected.c_str(), size_x, size_y);
 #endif
 
 #if !defined(NARM_NEON) && defined(__ARM_NEON__)
