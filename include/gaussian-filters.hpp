@@ -15,7 +15,8 @@
 #include <arm_neon.h>
 #endif
 
-float *golden(const char *infilename, const char *outfilename, size_t&  size_x, size_t& size_y) {
+float *golden(const char *infilename, const char *outfilename, size_t &size_x,
+              size_t &size_y) {
   int status = 0;
 
   size_t n_iter;
@@ -46,7 +47,7 @@ float *golden(const char *infilename, const char *outfilename, size_t&  size_x, 
 
   clock_t begin = clock();
 
-  filter_gauss_2d_flt(data, column, data_row, data_col, size_x, size_y, n_iter,
+  filter_gauss_2d_flt(data, column, data_row, data_col, size_x, size_y, 1,
                       filter_radius);
 
   clock_t end = clock();
@@ -91,9 +92,8 @@ void filter_gauss_2d_neon(float *data, float *data_copy, float *data_row,
   size_t limit = quot * 4;
   for (size_t x = 0; x < limit; x += 4) {
     // Apply filter
-    // for (size_t i = n_iter; i--;) {
-    filter_simd_neon(data + x, size_y, size_x, filter_radius);
-    // }
+    for (size_t i = n_iter; i--;)
+      filter_simd_neon(data + x, size_y, size_x, filter_radius);
   }
 
   float *ptr2;
@@ -156,7 +156,7 @@ float *filter_neon(const char *infilename, const char *outfilename) {
 
   clock_t begin = clock();
 
-  filter_gauss_2d_neon(data, NULL, data_row, NULL, size_x, size_y, n_iter,
+  filter_gauss_2d_neon(data, NULL, data_row, NULL, size_x, size_y, 1,
                        filter_radius);
 
   clock_t end = clock();
@@ -200,17 +200,17 @@ void filter_gauss_2d_sse(float *data, float *data_copy, float *data_row,
 
   for (size_t x = 0; x < limit; x += 4) {
     // Apply filter
-    // for (size_t i = n_iter; i--;) {
-    filter_simd_sse(data + x, size_y, size_x, filter_radius);
-    // }
+    for (size_t i = n_iter; i--;)
+      filter_simd_sse(data + x, size_y, size_x, filter_radius);
   }
 
   float *ptr2;
   // data_copy = (float *)malloc(sizeof(float) * size_y);
   data_copy = (float *)_mm_malloc(size_y * sizeof(float), sizeof(float));
-  
+
   // data_col = (float *)malloc(sizeof(float) * (size_y + 2 * filter_radius));
-  data_col = (float *)_mm_malloc((size_y + 2 * filter_radius) * sizeof(float), sizeof(float));
+  data_col = (float *)_mm_malloc((size_y + 2 * filter_radius) * sizeof(float),
+                                 sizeof(float));
 
   for (size_t x = size_x; x > limit; x--) {
     // Copy data into column array
@@ -265,12 +265,12 @@ float *filter_sse(const char *infilename, const char *outfilename) {
 
   // float *data_row =
   //     (float *)malloc(sizeof(float) * (size_x + 2 * filter_radius));
-  float *data_row =
-      (float *)_mm_malloc((size_x + 2 * filter_radius) * sizeof(float), sizeof(float));
+  float *data_row = (float *)_mm_malloc(
+      (size_x + 2 * filter_radius) * sizeof(float), sizeof(float));
 
   clock_t begin = clock();
 
-  filter_gauss_2d_sse(data, NULL, data_row, NULL, size_x, size_y, n_iter,
+  filter_gauss_2d_sse(data, NULL, data_row, NULL, size_x, size_y, 1,
                       filter_radius);
 
   clock_t end = clock();
@@ -314,16 +314,16 @@ void filter_gauss_2d_avx(float *data, float *data_copy, float *data_row,
 
   for (size_t x = 0; x < limit; x += 8) {
     // Apply filter
-    // for (size_t i = n_iter; i--;) {
-    filter_simd_avx(data + x, size_y, size_x, filter_radius);
-    // }
+    for (size_t i = n_iter; i--;)
+      filter_simd_avx(data + x, size_y, size_x, filter_radius);
   }
 
   float *ptr2;
   // data_copy = (float *)malloc(sizeof(float) * size_y);
   data_copy = (float *)_mm_malloc(size_y * sizeof(float), sizeof(float));
   // data_col = (float *)malloc(sizeof(float) * (size_y + 2 * filter_radius));
-  data_col = (float *)_mm_malloc((size_y + 2 * filter_radius) * sizeof(float), sizeof(float));
+  data_col = (float *)_mm_malloc((size_y + 2 * filter_radius) * sizeof(float),
+                                 sizeof(float));
 
   for (size_t x = size_x; x > limit; x--) {
     // Copy data into column array
@@ -376,13 +376,15 @@ float *filter_avx(const char *infilename, const char *outfilename) {
   size_t size_x = fits.naxes[0];
   size_t size_y = fits.naxes[1];
 
-  // float *data_row = (float *)malloc(sizeof(float) * (size_x + 2 * filter_radius));
+  // float *data_row = (float *)malloc(sizeof(float) * (size_x + 2 *
+  // filter_radius));
 
-    float *data_row =  (float *)_mm_malloc((size_x + 2 * filter_radius) * sizeof(float), sizeof(float));
+  float *data_row = (float *)_mm_malloc(
+      (size_x + 2 * filter_radius) * sizeof(float), sizeof(float));
 
   clock_t begin = clock();
 
-  filter_gauss_2d_avx(data, NULL, data_row, NULL, size_x, size_y, n_iter,
+  filter_gauss_2d_avx(data, NULL, data_row, NULL, size_x, size_y, 1,
                       filter_radius);
 
   clock_t end = clock();
@@ -404,11 +406,11 @@ float *filter_avx(const char *infilename, const char *outfilename) {
 }
 #endif
 
-#if !defined(NAVX2) && defined(__AVX512F__) 
+#if !defined(NAVX2) && defined(__AVX512F__)
 void filter_gauss_2d_avx_512(float *data, float *data_copy, float *data_row,
-                         float *data_col, const size_t size_x,
-                         const size_t size_y, const size_t n_iter,
-                         const size_t filter_radius) {
+                             float *data_col, const size_t size_x,
+                             const size_t size_y, const size_t n_iter,
+                             const size_t filter_radius) {
   // Set up a few variables
   const size_t size_xy = size_x * size_y;
   float *ptr = data + size_xy;
@@ -435,7 +437,8 @@ void filter_gauss_2d_avx_512(float *data, float *data_copy, float *data_row,
   // data_copy = (float *)malloc(sizeof(float) * size_y);
   data_copy = (float *)_mm_malloc(size_y * sizeof(float), sizeof(float));
   // data_col = (float *)malloc(sizeof(float) * (size_y + 2 * filter_radius));
-  data_col = (float *)_mm_malloc((size_y + 2 * filter_radius) * sizeof(float), sizeof(float));
+  data_col = (float *)_mm_malloc((size_y + 2 * filter_radius) * sizeof(float),
+                                 sizeof(float));
 
   for (size_t x = size_x; x > limit; x--) {
     // Copy data into column array
@@ -488,14 +491,16 @@ float *filter_avx_512(const char *infilename, const char *outfilename) {
   size_t size_x = fits.naxes[0];
   size_t size_y = fits.naxes[1];
 
-  // float *data_row = (float *)malloc(sizeof(float) * (size_x + 2 * filter_radius));
+  // float *data_row = (float *)malloc(sizeof(float) * (size_x + 2 *
+  // filter_radius));
 
-    float *data_row =  (float *)_mm_malloc((size_x + 2 * filter_radius) * sizeof(float), sizeof(float));
+  float *data_row = (float *)_mm_malloc(
+      (size_x + 2 * filter_radius) * sizeof(float), sizeof(float));
 
   clock_t begin = clock();
 
   filter_gauss_2d_avx_512(data, NULL, data_row, NULL, size_x, size_y, n_iter,
-                      filter_radius);
+                          filter_radius);
 
   clock_t end = clock();
   double time_spent = (double)(end - begin) / CLOCKS_PER_SEC;
@@ -516,4 +521,4 @@ float *filter_avx_512(const char *infilename, const char *outfilename) {
 }
 #endif
 
-#endif //GAUSSIAN_FILTERS_HPP
+#endif // GAUSSIAN_FILTERS_HPP

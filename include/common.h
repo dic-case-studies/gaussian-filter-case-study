@@ -38,35 +38,6 @@ void optimal_filter_size_dbl(const double sigma, size_t *filter_radius,
   return;
 }
 
-void filter_boxcar_1d_flt(float *data, float *data_copy, const size_t size,
-                          const size_t filter_radius) {
-  // Define filter size
-  const size_t filter_size = 2 * filter_radius + 1;
-  const float inv_filter_size = 1.0 / filter_size;
-  size_t i;
-
-  // Make copy of data, taking care of NaN
-  for (i = size; i--;)
-    data_copy[filter_radius + i] = FILTER_NAN(data[i]);
-
-  // Fill overlap regions with 0
-  for (i = filter_radius; i--;)
-    data_copy[i] = data_copy[size + filter_radius + i] = 0.0;
-
-  // Apply boxcar filter to last data point
-  data[size - 1] = 0.0;
-  for (i = filter_size; i--;)
-    data[size - 1] += data_copy[size + i - 1];
-  data[size - 1] *= inv_filter_size;
-
-  // Recursively apply boxcar filter to all previous data points
-  for (i = size - 1; i--;)
-    data[i] = data[i + 1] +
-              (data_copy[i] - data_copy[filter_size + i]) * inv_filter_size;
-
-  return;
-}
-
 #if !defined(NSSE) && defined(__SSE__)
 static inline __m128 filter_nan_sse(__m128 data_v) {
   // Filter nan
@@ -245,8 +216,7 @@ void filter_simd_avx(float *data, const size_t size, const size_t stride,
 }
 #endif
 
-
-#if !defined(NAVX2) && defined(__AVX512F__) 
+#if !defined(NAVX2) && defined(__AVX512F__)
 static inline __m512 filter_nan_avx_512(__m512 data_v) {
   // Filter nan
   __mmask16 nan_mask = _mm512_cmp_ps_mask(data_v, data_v, _CMP_ORD_Q);
@@ -256,7 +226,7 @@ static inline __m512 filter_nan_avx_512(__m512 data_v) {
 }
 
 void filter_simd_avx_512(float *data, const size_t size, const size_t stride,
-                     const size_t filter_radius) {
+                         const size_t filter_radius) {
   const size_t filter_size = 2 * filter_radius + 1;
   size_t i;
 
